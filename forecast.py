@@ -3,8 +3,21 @@ from pandas import read_csv
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_squared_error
 from math import sqrt
-from process_data import difference, inverse_difference
+from process_data import inverse_difference
 import numpy
+
+
+# create a differenced series
+def difference(dataset, interval=1):
+	diff = list()
+	for i in range(interval, len(dataset)):
+		value = dataset[i] - dataset[i - interval]
+		diff.append(value)
+	return numpy.array(diff)
+
+# invert differenced value
+def inverse_difference(history, yhat, interval=1):
+	return yhat + history[-interval]
 
 # evaluate an ARIMA model for a given order (p,d,q) and return RMSE
 def evaluate_arima_model(X, arima_order):
@@ -31,20 +44,21 @@ def evaluate_arima_model(X, arima_order):
 
 # evaluate combinations of p, d and q values for an ARIMA model
 def evaluate_models(dataset, p_values, d_values, q_values):
-	dataset = dataset.astype('float32')
-	best_score, best_cfg = float("inf"), None
-	for p in p_values:
-		for d in d_values:
-			for q in q_values:
-				order = (p,d,q)
-				try:
-					rmse = evaluate_arima_model(dataset, order)
-					if rmse < best_score:
-						best_score, best_cfg = rmse, order
-					print('ARIMA%s RMSE=%.3f' % (order,rmse))
-				except:
-					continue
-	print('Best ARIMA%s RMSE=%.3f' % (best_cfg, best_score))
+    dataset = dataset.astype('float32')
+    print(dataset.shape, "dataset shape")
+    best_score, best_cfg = float("inf"), None
+    for p in p_values:
+        for d in d_values:
+            for q in q_values:
+                order = (p,d,q)
+                try:
+                    rmse = evaluate_arima_model(dataset, order)
+                    if rmse < best_score:
+                        best_score, best_cfg = rmse, order
+                    print('ARIMA%s RMSE=%.3f' % (order,rmse))
+                except:
+                    continue
+    print('Best ARIMA%s RMSE=%.3f' % (best_cfg, best_score))
 
 def grid_search_arima(dir, product_name):
     # load dataset
@@ -55,5 +69,6 @@ def grid_search_arima(dir, product_name):
     d_values = range(0, 3)
     q_values = range(0, 7)
     warnings.filterwarnings("ignore")
+    # print(series.values.shape, "series shape")
     evaluate_models(series.values, p_values, d_values, q_values)
 	

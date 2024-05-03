@@ -85,7 +85,7 @@ def inverse_difference(history, yhat, interval=1):
 def deseasonalize_data(base_dir, product_name):
 
     # read the dataset
-    series = pd.read_csv(f"{base_dir}/{product_name}/data/{product_name}_cleaned_data.csv", \
+    series = pd.read_csv(f"{base_dir}/{product_name}/data/cleaned_data.csv", \
                          header=0, index_col=0, parse_dates=True)
 
     X = series.values
