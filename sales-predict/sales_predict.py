@@ -1,4 +1,9 @@
 import argparse
+import process_data
+import forecast
+import predict
+import validate
+import visualize
 
 
 def main():
@@ -7,7 +12,7 @@ def main():
     parser.add_argument('-c', '--clean', action='store_true', \
                         help='Generate a cleaned dataset for a given product')
     parser.add_argument('-p', '--product', type=str, \
-                        help='Specify the product')
+                        help='Specify the product you want to perform the operation on')
     parser.add_argument('-d', '--dir', type=str, \
                         help='Specify location of directory you want to \
                             perform the operation on')
@@ -15,6 +20,8 @@ def main():
                         help='Select a prediction model tor train "arima" or "persistence"')
     parser.add_argument('--predict', type=str, \
                         help='Make predictions based on model argument selected')
+    parser.add_argument('--predict_date', type=str, \
+                        help='Specify the date you want to make a prediction for')
     parser.add_argument('--validate', type=str, \
                         help='Validate model based on validation data')
     parser.add_argument('-P', '--p_val', type=int, \
@@ -24,9 +31,10 @@ def main():
     parser.add_argument('-D', '--d_val', type=int, \
                         help='Specify the d value for the ARIMA model')
     parser.add_argument('-s', '--deseasonalize',action='store_true',  \
-                        help='Deseasonalize data basesd on season interval in months')
+                        help='Deseasonalize data basesd on anual seasonality')
     parser.add_argument('-v', '--visualize', type=str, \
-                        help='Generate visuals for the cleaned dataset')
+                        help='Generate visuals for the cleaned dataset. These include \
+                            "line plot", "summary statistics", and "density plot"')
 
     args = parser.parse_args()
     
@@ -58,10 +66,13 @@ def main():
             print("Please specify the directory and product using \
                   the -d and -p flags respectively")
             return
+        if not args.predict_date:
+            print("Please specify a date to make a prediction for")
+            return
         if args.predict == "arima":
-            predict.predict_arima(args.dir, args.product)
+            predict.predict_arima(args.dir, args.product, args.predict_date)
         elif args.predict == "persistence":
-            predict.predict_persistence(args.dir, args.product)
+            predict.predict_persistence(args.dir, args.product, args.predict_date)
         else:
             print("Please specify a valid model to use for prediction")
 
