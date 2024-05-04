@@ -92,6 +92,44 @@ def evaluate_models(dataset, p_values, d_values, q_values, dir, product_name):
 					continue
 	print('Best ARIMA%s RMSE=%.3f' % (best_cfg, best_score))
 
+def evaluate_model(dir, product_name, p, d, q):
+	order = (p,d,q)
+	dataset = dataset.astype('float32')
+	try:
+		rmse, model_fit, test, predictions = evaluate_arima_model(dataset, order)
+		# Create a new folder for the product in case it doesn't exist
+		os.makedirs(f"{dir}/{product_name}/model", exist_ok=True)
+		best_score, best_cfg = rmse, order
+		
+		file_path = f"{dir}/{product_name}/model/arima.pkl"
+		model_fit.save(file_path)
+		residual_mean = residual_analysis(dir, product_name, test, predictions)
+		bias_path = f'{dir}/{product_name}/model/bias.npy'
+		numpy.save(bias_path, [residual_mean])
+		with open(f"{dir}/{product_name}/model/hyperparameters.txt", 'w') as f:
+			f.write(f"P Value: {p}\n")
+			f.write(f"D Value: {d}\n")
+			f.write(f"Q Value: {q}\n")
+			f.write(f"RMSE: {rmse}\n")
+			f.write(f"Residual Mean Value: {residual_mean}\n")
+
+		print('ARIMA%s RMSE=%.3f' % (order,rmse))
+	except:
+		print("errored")
+
+def train_arima(dir, product_name, p_val, q_val, d_val):
+	# load dataset
+	series = read_csv(f"{dir}/{product_name}/data/stationary_data.csv", \
+					  header=None, index_col=0, parse_dates=True)
+	# prepare data
+	X = series.values
+	# evaluate parameters
+	p_values = [p_val]
+	d_values = [d_val]
+	q_values = [q_val]
+	warnings.filterwarnings("ignore")
+	evaluate_model(X, p_values, d_values, q_values, dir, product_name)
+
 def grid_search_arima(dir, product_name, pU = 7, dU = 3, qU = 7):
     # load dataset
     series = read_csv(f"{dir}/{product_name}/data/stationary_data.csv", \

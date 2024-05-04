@@ -36,7 +36,16 @@ def clean_data(date):
     date = datetime.strptime(date_str, '%Y-%m-%d')
     return date.strftime('%Y-%m-%d')
 
-def predict(dir, product_name, date):
+def predict_persistence(dir, product_name, date):
+    csv_path = f'{dir}/{product_name}/data/cleaned_data.csv'
+    date = clean_data(date)
+    series = read_csv(csv_path, header=0, index_col=0, parse_dates=True)
+    yhat = float(series.values[-1])
+    if(yhat < 0):
+        yhat = 0
+    print('Predicted: %.3f' % yhat)
+
+def predict_arima(dir, product_name, date):
     model_path = f'{dir}/{product_name}/model/arima.pkl'
     bias_path = f'{dir}/{product_name}/model/bias.npy'
     csv_path = f'{dir}/{product_name}/data/stationary_data.csv'
