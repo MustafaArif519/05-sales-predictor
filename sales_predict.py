@@ -2,6 +2,9 @@ import argparse
 import process_data  # Assuming process_data.py contains the necessary functions
 import forecast  # Assuming forecast.py contains the necessary functions
 import visualize  # Assuming visualize.py contains the necessary functions
+import predict
+import validate
+
 
 def main():
     parser = argparse.ArgumentParser(description='Sales Forecaster')
@@ -15,8 +18,10 @@ def main():
                             perform the operation on')
     parser.add_argument('-m', '--model', type=str, \
                         help='Select a prediction model')
-    parser.add_argument('-m', '--predict', type=str, \
-                        help='Make predictiono based on model argument selected')
+    parser.add_argument('--predict', type=str, \
+                        help='Make predictions based on model argument selected')
+    parser.add_argument('--validate', type=str, \
+                        help='Validate model based on validation data')
     parser.add_argument('-P', '--p_val', type=int, \
                         help='Specify the p value for the ARIMA model')
     parser.add_argument('-Q', '--q_val', type=int, \
@@ -29,6 +34,12 @@ def main():
                         help='Generate visuals for the model\'s performance')
 
     args = parser.parse_args()
+    
+    if args.predict and args.dir and args.product:
+        predict.predict(args.dir, args.product)
+
+    if args.validate and args.dir and args.product:
+        validate.validate_arima(args.dir, args.product)
     
     if args.clean and args.product and args.dir:
         process_data.clean_data(args.dir, args.product)  

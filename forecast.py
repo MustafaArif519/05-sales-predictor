@@ -77,6 +77,8 @@ def evaluate_models(dataset, p_values, d_values, q_values, dir, product_name):
 						file_path = f"{dir}/{product_name}/model/arima.pkl"
 						model_fit.save(file_path)
 						residual_mean = residual_analysis(dir, product_name, test, predictions)
+						bias_path = f'{dir}/{product_name}/model/bias.npy'
+						numpy.save(bias_path, [residual_mean])
 						with open(f"{dir}/{product_name}/model/hyperparameters.txt", 'w') as f:
 							f.write(f"P Value: {p}\n")
 							f.write(f"D Value: {d}\n")
@@ -123,7 +125,7 @@ def persistence(dir, product_name):
 		# observation
 		obs = test[i]
 		history.append(obs)
-		# print('>Predicted=%.3f, Expected=%3.f' % (yhat, obs))
+		print('>Predicted=%.3f, Expected=%3.f' % (yhat, obs))
   
 	# report performance
 	mse = mean_squared_error(test, predictions)

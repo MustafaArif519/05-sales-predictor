@@ -1,6 +1,5 @@
 import pandas as pd
 from datetime import datetime
-import globals
 from statsmodels.tsa.stattools import adfuller
 import os
 import fnmatch
@@ -33,25 +32,39 @@ def standardize_date(date_str):
         # Split the date string into day, month, and year
          # Replace "/" with "-" in the date string
         date_str = date_str.replace('/', '-')
-
+        
         month, day, year = date_str.split('-')
-
+        
         # Add leading zeros to day and month if necessary
+        day = int(day)
+        if day <= 9:
+            day = 1
+        elif day <= 19:
+            day = 10
+        elif day <= 29:
+            day = 20
+        else:
+            day = 30
+        day = str(day)
         day = day.zfill(2)
         month = month.zfill(2)
 
         # Reconstruct the date string
         date_str = '-'.join([year, month, day])
+        # date_str = '-'.join([year, month])
 
         # Parse the date string
         date = datetime.strptime(date_str, '%Y-%m-%d')
+        # date = datetime.strptime(date_str, '%Y-%m')
     except ValueError:
         return "Invalid date format"
     return date.strftime('%Y-%m-%d')
+    # return date.strftime('%Y-%m')
 
 def total_sales(df):
     # Group the dataset by date and calculate the sum of sales for each month
-    df = df.groupby('date').sum()
+    df['sales'] = df['sales'].str.replace(',', '').astype(float)
+    df = df.groupby('date')['sales'].sum() / 100  # Sum sales and express in thousands
     return df
 
 def clean_data(dir, product_name):

@@ -1,0 +1,5 @@
+P Value: 4
+D Value: 0
+Q Value: 1
+RMSE: 101.45639168658867
+Residual Mean Value: -11.856764793395996

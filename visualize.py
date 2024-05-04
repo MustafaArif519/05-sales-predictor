@@ -12,6 +12,9 @@ def display(dir, product_name, display_type):
     input_csv = f"{dir}/{product_name}/data/cleaned_data.csv"
     series = read_csv(input_csv, header=0, index_col=0, parse_dates=True)
 
+    # Create a new folder for the product in case it doesn't exist
+    os.makedirs(f"{dir}/{product_name}/visual", exist_ok=True)
+
     if display_type == 'summary statistics':
         with open(f"{dir}/{product_name}/visual/summary_stats_clean.txt", 'w') as f:
             f.write(str(series.describe()))
