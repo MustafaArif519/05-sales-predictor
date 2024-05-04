@@ -36,7 +36,7 @@ def main():
     args = parser.parse_args()
     
     if args.predict and args.dir and args.product:
-        predict.predict(args.dir, args.product)
+        predict.predict(args.dir, args.product, args.predict)
 
     if args.validate and args.dir and args.product:
         validate.validate_arima(args.dir, args.product)
