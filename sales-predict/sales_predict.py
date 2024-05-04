@@ -1,9 +1,4 @@
 import argparse
-import process_data  # Assuming process_data.py contains the necessary functions
-import forecast  # Assuming forecast.py contains the necessary functions
-import visualize  # Assuming visualize.py contains the necessary functions
-import predict
-import validate
 
 
 def main():
@@ -28,7 +23,7 @@ def main():
                         help='Specify the q value for the ARIMA model')
     parser.add_argument('-D', '--d_val', type=int, \
                         help='Specify the d value for the ARIMA model')
-    parser.add_argument('-s', '--deseasonalize', type=str,  \
+    parser.add_argument('-s', '--deseasonalize',action='store_true',  \
                         help='Deseasonalize data basesd on season interval in months')
     parser.add_argument('-v', '--visualize', type=str, \
                         help='Generate visuals for the cleaned dataset')

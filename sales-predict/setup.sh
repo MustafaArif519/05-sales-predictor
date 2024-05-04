@@ -14,6 +14,7 @@ virtualenv venv
 # Activate the virtual environment
 source venv/bin/activate
 
+
 # Check if requirements.txt exists in the current directory
 if [ -f "requirements.txt" ]; then
     echo "Installing dependencies from requirements.txt..."
@@ -24,3 +25,6 @@ fi
 
 # Deactivate the virtual environment
 deactivate
+
+# Activate the running script of sales-predict program
+chmod +x scripts/running.sh
