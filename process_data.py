@@ -24,6 +24,7 @@ def extract_and_filter(input_csv, product_name):
      # Sort the dataframe by date from oldest to most recent
     sorted_df = filtered_df.sort_values(by='date')
 
+
     return sorted_df
 
 
@@ -40,13 +41,13 @@ def standardize_date(date_str):
         month = month.zfill(2)
 
         # Reconstruct the date string
-        date_str = '-'.join([year, month])
+        date_str = '-'.join([year, month, day])
 
         # Parse the date string
-        date = datetime.strptime(date_str, '%Y-%m')
+        date = datetime.strptime(date_str, '%Y-%m-%d')
     except ValueError:
         return "Invalid date format"
-    return date.strftime('%Y-%m')
+    return date.strftime('%Y-%m-%d')
 
 def total_sales(df):
     # Group the dataset by date and calculate the sum of sales for each month
@@ -63,12 +64,18 @@ def clean_data(dir, product_name):
 
     product_df = total_sales(product_df)
     
+    split_point = len(product_df) - (len(product_df) * 0.1)
+    split_point = int(split_point)
+    dataset, validation = product_df[0:split_point], product_df[split_point:]
 
     # Create a new folder for the product in case it doesn't exist
     os.makedirs(f"{dir}/{product_name}/data", exist_ok=True)
 
     # Write the new CSV file
-    product_df.to_csv(f"{dir}/{product_name}/data/cleaned_data.csv", index=True)
+    dataset.to_csv(f"{dir}/{product_name}/data/cleaned_data.csv", index=True)
+    validation.to_csv(f"{dir}/{product_name}/data/cleaned_data_valid.csv", index=True)
+
+    print(f"{product_name} Data Successfully Cleaned")
     
 def difference(dataset, interval=1):
     diff = list()
@@ -116,3 +123,5 @@ def deseasonalize_data(base_dir, product_name):
     # Create a new folder for the product in case it doesn't exist
     os.makedirs(f"{base_dir}/{product_name}/visual", exist_ok=True)
     pyplot.savefig(f"{base_dir}/{product_name}/visual/stationary_plot.png")
+
+    print(f"{product_name} Cleaned Data Successfully Deseasonalized")
