@@ -4,6 +4,7 @@ import forecast
 import predict
 import validate
 import visualize
+import velocity
 
 
 def main():
@@ -35,6 +36,10 @@ def main():
     parser.add_argument('-v', '--visualize', type=str, \
                         help='Generate visuals for the cleaned dataset. These include \
                             "line plot", "summary statistics", and "density plot"')
+    parser.add_argument('--velocity', nargs=2, \
+                    help='Calculate the velocity of a product over a given interval\
+                        and date. The first argument is the interval and the second is the date"')
+    
 
     args = parser.parse_args()
     
@@ -45,6 +50,20 @@ def main():
                   the -d and -p flags respectively")
             return
         process_data.clean_data(args.dir, args.product)  
+
+    if args.velocity:
+        if not args.dir or not args.product:
+            print("Please specify the directory and product using \
+                  the -d and -p flags respectively")
+            return
+        if not args.velocity[0] or not args.velocity[1]:
+            print("Please specify the interval and date to calculate velocity")
+            return
+        args = parser.parse_args()
+        interval = args.velocity[0].split(',')
+        date = args.velocity[1] 
+        velocity.calculate_average_velocity(args.dir, args.product, interval, date)
+        print("Velocity successfully calculated")
     
     elif args.train:
         if not args.dir or not args.product:

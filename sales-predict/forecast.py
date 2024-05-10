@@ -119,7 +119,7 @@ def evaluate_model(dir, product_name, p, d, q):
 
 def train_arima(dir, product_name, p_val, q_val, d_val):
 	# load dataset
-	series = read_csv(f"{dir}/{product_name}/data/stationary_data.csv", \
+	series = read_csv(f"{dir}/{product_name}/data/cleaned_data.csv", \
 					  header=None, index_col=0, parse_dates=True)
 	# prepare data
 	X = series.values
@@ -132,7 +132,7 @@ def train_arima(dir, product_name, p_val, q_val, d_val):
 
 def grid_search_arima(dir, product_name, pU = 7, dU = 3, qU = 7):
     # load dataset
-    series = read_csv(f"{dir}/{product_name}/data/stationary_data.csv", \
+    series = read_csv(f"{dir}/{product_name}/data/cleaned_data.csv", \
 					  header=None, index_col=0, parse_dates=True)
     # evaluate parameters
     p_values = range(0, pU)

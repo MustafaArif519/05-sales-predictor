@@ -23,7 +23,6 @@ def extract_and_filter(input_csv, product_name):
      # Sort the dataframe by date from oldest to most recent
     sorted_df = filtered_df.sort_values(by='date')
 
-
     return sorted_df
 
 
@@ -36,16 +35,16 @@ def standardize_date(date_str):
         month, day, year = date_str.split('-')
         
         # Add leading zeros to day and month if necessary
-        day = int(day)
-        if day <= 9:
-            day = 1
-        elif day <= 19:
-            day = 10
-        elif day <= 29:
-            day = 20
-        else:
-            day = 30
-        day = str(day)
+        # day = int(day)
+        # if day <= 9:
+        #     day = 1
+        # elif day <= 19:
+        #     day = 10
+        # elif day <= 29:
+        #     day = 20
+        # else:
+        #     day = 30
+        # day = str(day)
         day = day.zfill(2)
         month = month.zfill(2)
 
@@ -74,8 +73,7 @@ def clean_data(dir, product_name):
 
     # Obtained the filtered and cleaned dataset
     product_df = extract_and_filter(input_csv, product_name)
-
-    product_df = total_sales(product_df)
+    
     
     split_point = len(product_df) - (len(product_df) * 0.1)
     split_point = int(split_point)
@@ -85,8 +83,8 @@ def clean_data(dir, product_name):
     os.makedirs(f"{dir}/{product_name}/data", exist_ok=True)
 
     # Write the new CSV file
-    dataset.to_csv(f"{dir}/{product_name}/data/cleaned_data.csv", index=True)
-    validation.to_csv(f"{dir}/{product_name}/data/cleaned_data_valid.csv", index=True)
+    dataset.to_csv(f"{dir}/{product_name}/data/cleaned_data.csv", index=False)
+    validation.to_csv(f"{dir}/{product_name}/data/cleaned_data_valid.csv", index=False)
 
     print(f"{product_name} Data Successfully Cleaned")
     
