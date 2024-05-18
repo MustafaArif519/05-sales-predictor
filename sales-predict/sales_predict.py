@@ -39,19 +39,38 @@ def main():
     parser.add_argument('--velocity', nargs=2, \
                     help='Calculate the velocity of a product over a given interval\
                         and date. The first argument is the interval and the second is the date"')
+    parser.add_argument('--inventory', type=str, \
+                    help='Calculate the stock out and buffered date of a product\
+                        based on the velocity calculated previously after a given date"')
     
 
     args = parser.parse_args()
-    
+    products = args.product.split(',')
 
     if args.clean:
         if not args.dir or not args.product:
             print("Please specify the directory and product using \
                   the -d and -p flags respectively")
             return
-        process_data.clean_data(args.dir, args.product)  
+        for product in products:
+            process_data.clean_data(args.dir, product)
+            print("Data successfully cleaned for product: ", product)
+            print("\n")
 
-    if args.velocity:
+    elif args.inventory:
+        if not args.dir or not args.product:
+            print("Please specify the directory and product using \
+                  the -d and -p flags respectively")
+            return
+        if not args.inventory:
+            print("Please specify the date to calculate inventory")
+            return
+        for product in products:
+            velocity.calculate_day_inventory_left(args.dir, product, args.inventory)
+            print("Inventory successfully calculated for product: ", product)
+            print("\n")
+
+    elif args.velocity:
         if not args.dir or not args.product:
             print("Please specify the directory and product using \
                   the -d and -p flags respectively")
@@ -62,9 +81,11 @@ def main():
         args = parser.parse_args()
         interval = args.velocity[0].split(',')
         date = args.velocity[1] 
-        velocity.calculate_average_velocity(args.dir, args.product, interval, date)
-        print("Velocity successfully calculated")
-    
+        for product in products:
+            velocity.calculate_average_velocity(args.dir, product, interval, date)
+            print("Velocity successfully calculated for product: ", product)
+            print("\n")
+        
     elif args.train:
         if not args.dir or not args.product:
             print("Please specify the directory and product")
